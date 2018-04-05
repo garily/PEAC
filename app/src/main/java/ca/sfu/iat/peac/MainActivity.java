@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
     }
 
     private void showDisclaimer() {
-
+        fgMain.setOnClickListener(null);
         fgMain.removeAllViews();
         fgMain.setGravity(Gravity.CENTER);
 
