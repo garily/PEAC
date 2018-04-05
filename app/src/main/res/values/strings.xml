@@ -4,7 +4,30 @@
 	<string name="strDisclaimer">In order to minimize harms this application recommends that the federal government:\n\n1.Set a national minimum age of purchase of 18, acknowledging the right of provinces and territories to harmonize it with their minimum age of purchase of alcohol\n\n2.Impose strict sanctions on false or misleading promotion as well as promotion that encourages excessive consumption,where promotion is allowed</string>
 	<string name="strDisagree">Disagree</string>
 	<string name="strAgree">Agree</string>
+	<string name="strLaunchHome">Go to Test</string>
 
-	<!-- TODO: Remove or change this placeholder text -->
-	<string name="hello_blank_fragment">Hello blank fragment</string>
+
+	<string name="hello_world">Hello world!</string>
+	<string name="action_settings">Settings</string>
+	<string name="connect">Connect</string>
+	<string name="status">Connection Status:</string>
+	<string name="disconnect">Disconnect</string>
+	<string name="refresh">Refresh</string>
+	<string name="init_val">0.0</string>
+	<string name="eeg">EEG data:</string>
+	<string name="accel">Accelerometer Data:</string>
+	<string name="version">Version:</string>
+	<string name="undefined">unknown</string>
+	<string name="artifacts">Blinks, Jaw: </string>
+	<string name="msg_count">Msg number, size: </string>
+	<string name="pause">Pause/Resume</string>
+	<string name="drop">Drop</string>
+	<string name="muse_elem">Alpha relative:</string>
+
+
+	<string name="strStartTest">Start Test</string>
+
+	<string name="permission_dialog_title">Muse Needs Your Permission</string>
+	<string name="permission_dialog_description">Muse needs a few permissions to work properly. On the next screens, tap "Allow" to proceed. If you deny, Muse will not work properly until you go into your Android settings and allow.</string>
+	<string name="permission_dialog_understand">I Understand</string>
 </resources>

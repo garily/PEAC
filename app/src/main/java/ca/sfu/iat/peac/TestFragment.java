@@ -7,6 +7,8 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 
 /**
@@ -20,6 +22,9 @@ import android.view.ViewGroup;
 public class TestFragment extends Fragment {
     public static final int BASELINE = 0;
     public static final int AFTERDOSE = 1;
+
+
+    private boolean ifStop = false;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String TEST_TYPE = "test_type";
@@ -78,6 +83,7 @@ public class TestFragment extends Fragment {
             testType = getArguments().getInt(TEST_TYPE);
             testTime = getArguments().getInt(TEST_TIME);
         }
+
     }
 
     @Override
@@ -85,6 +91,20 @@ public class TestFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_test, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Button btnStartTest = getActivity().findViewById(R.id.btnStartTest);
+        btnStartTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                view.setVisibility(View.GONE);
+                startTest();
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -109,6 +129,38 @@ public class TestFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void startTest() {
+        final TextView tvTimer = getActivity().findViewById(R.id.tvTimer);
+        final long startTime = System.currentTimeMillis();
+
+        final Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(50);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tvTimer.setText(String.format("%.3f" ,(System.currentTimeMillis() - startTime)/1000f));
+                                // update TextView here!
+                            }
+                        });
+                        getActivity().findViewById(R.id.fgMain).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                interrupt();
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+
+        t.start();
     }
 
     /**
