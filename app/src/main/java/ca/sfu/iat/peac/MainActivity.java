@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
     private void prepareHome(boolean ifDisclaimerAgreed) {
         fgMain.removeAllViews();
         if (!ifDisclaimerAgreed) {
-            showDislcaimer();
+            showDisclaimer();
         }
         else setMainFragment(R.id.fgMain);
     }
@@ -264,7 +264,9 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
         }
     }
 
-    private void showDislcaimer() {
+    private void showDisclaimer() {
+
+        fgMain.removeAllViews();
         fgMain.setGravity(Gravity.CENTER);
 
 
