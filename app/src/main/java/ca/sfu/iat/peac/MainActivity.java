@@ -273,8 +273,8 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
         LayoutInflater inflater = getLayoutInflater();
         inflater.inflate(R.layout.disclaimer, fgMain);
 
-        Button btnDisagree = (Button) findViewById(R.id.btnAgree);
-        Button btnAgree = (Button) findViewById(R.id.btnDisagree);
+        Button btnDisagree = (Button) findViewById(R.id.btnDisagree);
+        Button btnAgree = (Button) findViewById(R.id.btnAgree);
 
         btnAgree.setOnClickListener(new View.OnClickListener() {
             @Override
