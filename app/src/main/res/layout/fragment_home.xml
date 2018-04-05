@@ -31,4 +31,19 @@
 			android:scaleType="centerInside"
 			android:background="@null"
 			/>
+
+	<ImageButton
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			app:srcCompat="@android:drawable/checkbox_on_background"
+			android:layout_above="@+id/imgBtnStartSession"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"
+			android:layout_marginLeft="67dp"
+			android:layout_marginStart="67dp"
+			android:layout_marginBottom="70dp"
+			android:background="@null"
+			android:visibility="gone"
+			android:id="@+id/imgBtnBaselineDone1"
+			/>
 </RelativeLayout>

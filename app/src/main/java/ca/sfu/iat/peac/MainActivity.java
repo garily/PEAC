@@ -38,6 +38,9 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
     public static final int START_RECORDING = 0;
     public static final int STOP_RECORDING = 1;
 
+
+    public static boolean ifBaseline1;
+
     private SharedPreferences prefs;
     private boolean ifDisclaimerAgreed;
     private RelativeLayout fgMain;
@@ -291,8 +294,8 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
         LayoutInflater inflater = getLayoutInflater();
         inflater.inflate(R.layout.disclaimer, fgMain);
 
-        Button btnDisagree = (Button) findViewById(R.id.btnDisagree);
-        Button btnAgree = (Button) findViewById(R.id.btnAgree);
+        final Button btnDisagree = (Button) findViewById(R.id.btnDisagree);
+        final Button btnAgree = (Button) findViewById(R.id.btnAgree);
 
         btnAgree.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -300,6 +303,8 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
                 ifDisclaimerAgreed = true;
 
                 launchConnectInterface(R.id.fgMain);
+                view.setOnClickListener(null);
+                btnDisagree.setOnClickListener(null);
                 //initUI();
                 //setMainFragment(R.id.fgMain);
             }
@@ -308,6 +313,8 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
         btnDisagree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                view.setOnClickListener(null);
+                btnAgree.setOnClickListener(null);
                 Intent intent = new Intent(MainActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
@@ -385,14 +392,32 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
     private final Runnable recordAlphaData = new Runnable() {
         @Override
         public void run() {
+            for(double i: alphaBuffer) {
+
+                if (i > 0.0) {
+
+                }
+            }
             //average alpha power value
             alphaRecord.add(new WavePowerRecord(
-                    (alphaBuffer[0] + alphaBuffer[1] + alphaBuffer[2] + alphaBuffer[3]) / 4,
+                    avgDoubleArray(alphaBuffer),
                     System.currentTimeMillis())
             );
             handler.postDelayed(tickUi, 1000 / 60);
         }
     };
+
+    private double avgDoubleArray(double[] doubles) {
+        double sum = 0.0;
+        int count = 0;
+        for (double i: doubles) {
+            if (i > 0.0) {
+                sum += i;
+                count ++;
+            }
+        }
+        return sum / count;
+    }
 
 
 

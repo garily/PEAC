@@ -155,13 +155,15 @@ public class TestFragment extends Fragment {
 
     private void startTest() {
         final TextView tvTimer = getActivity().findViewById(R.id.tvTimer);
-        final long startTime = System.currentTimeMillis();
+        final long testStartTime = System.currentTimeMillis();
 
         final Button btnQuitTest = getActivity().findViewById(R.id.btnQuitTest);
         btnQuitTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MainActivity.ifBaseline1 = true;
                 getFragmentManager().popBackStack();
+                view.setOnClickListener(null);
             }
         });
 
@@ -172,7 +174,8 @@ public class TestFragment extends Fragment {
             public void run() {
                 try {
                     mListener.onTestAction(MainActivity.START_RECORDING);
-                    Thread.sleep((long) (Math.random() * 3));
+                    Thread.sleep((long) (Math.random() * 5000));
+                    final long startTime = System.currentTimeMillis();
                     while (!isInterrupted()) {
                         Thread.sleep(50);
                         getActivity().runOnUiThread(new Runnable() {
@@ -182,15 +185,6 @@ public class TestFragment extends Fragment {
                                 tvTimer.setText(String.format("%.3f" ,(System.currentTimeMillis() - startTime)/1000f));
                             }
                         });
-                        getActivity().findViewById(R.id.fgMain).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                interrupt();
-                                mListener.onTestAction(MainActivity.STOP_RECORDING);
-                                btnQuitTest.setVisibility(View.VISIBLE);
-                            }
-
-                        });
                     }
                 } catch (InterruptedException e) {
                 }
@@ -198,6 +192,16 @@ public class TestFragment extends Fragment {
         };
 
         timerThread.start();
+        getActivity().findViewById(R.id.fgMain).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                timerThread.interrupt();
+                mListener.onTestAction(MainActivity.STOP_RECORDING);
+                btnQuitTest.setVisibility(View.VISIBLE);
+                view.setOnClickListener(null);
+            }
+
+        });
     }
 
 
