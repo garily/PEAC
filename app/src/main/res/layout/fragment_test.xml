@@ -18,9 +18,21 @@
 
 	<Button
 			android:text="@string/strStartTest"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:layout_width="150dp"
+			android:layout_height="80dp"
+			android:textSize="18dp"
 			android:id="@+id/btnStartTest"
+			android:layout_alignParentBottom="true"
+			android:layout_centerHorizontal="true"
+			android:layout_marginBottom="127dp"
+			/>
+	<Button
+			android:visibility="gone"
+			android:textSize="18dp"
+			android:text="@string/strQuitTest"
+			android:layout_width="150dp"
+			android:layout_height="80dp"
+			android:id="@+id/btnQuitTest"
 			android:layout_alignParentBottom="true"
 			android:layout_centerHorizontal="true"
 			android:layout_marginBottom="127dp"

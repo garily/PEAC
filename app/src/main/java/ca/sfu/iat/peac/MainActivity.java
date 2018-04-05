@@ -29,14 +29,34 @@ import com.choosemuse.libmuse.*;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MainActivity extends AppCompatActivity implements TestFragment.OnFragmentInteractionListener, View.OnClickListener{
 
+    public static final int START_RECORDING = 0;
+    public static final int STOP_RECORDING = 1;
+
     private SharedPreferences prefs;
     private boolean ifDisclaimerAgreed;
     private RelativeLayout fgMain;
+    private boolean ifConnected;
+
+    private class WavePowerRecord {
+        public double record;
+        public long timeStamp;
+        public WavePowerRecord(double record, long timeStamp) {
+            this.record = record;
+            this.timeStamp = timeStamp;
+        }
+        @Override
+        public String toString () {
+            return "alphaValue = " + record + ", timeStamp = " + timeStamp;
+        }
+    }
+
+    private ArrayList<WavePowerRecord> alphaRecord;
 
     /**
      * Tag used for logging purposes.
@@ -162,10 +182,8 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
 
         // Start up a thread for asynchronous file operations.
         // This is only needed if you want to do File I/O.
-        fileThread.start();
+        //fileThread.start();
 
-        // Start our asynchronous updates of the UI.
-        handler.post(tickUi);
 
         //Retrieve previous data
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -194,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
         if (!ifDisclaimerAgreed) {
             showDisclaimer();
         }
-        else setMainFragment(R.id.fgMain);
+        else launchConnectInterface(R.id.fgMain);
     }
 
     @Override
@@ -224,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
             if (availableMuses.size() < 1 || musesSpinner.getAdapter().getCount() < 1) {
                 Log.w(TAG, "There is nothing to connect to");
             } else {
-
+                ifConnected = true;
                 // Cache the Muse that the user has selected.
                 muse = availableMuses.get(musesSpinner.getSelectedItemPosition());
                 // Unregister all prior listeners and register our data listener to
@@ -297,12 +315,33 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
         });
     }
 
-    private void launchConnectInterface(int fragmentId) {
-        fgMain.removeAllViews();
+    private void launchConnectInterface(final int fragmentId) {
+        RelativeLayout fg = (RelativeLayout) findViewById(fragmentId);
+        //fg.removeAllViews();
 
         LayoutInflater inflater = getLayoutInflater();
-        inflater.inflate(R.layout.muse_connect, fgMain);
+        inflater.inflate(R.layout.muse_connect, fg);
         initUI();
+
+        // Start our asynchronous updates of the UI.
+        handler.post(tickUi);
+
+        Button btnStartHome = (Button) findViewById(R.id.btnLaunchHome);
+        btnStartHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: remove the following line in productin
+                ifConnected = true;
+                if (!ifConnected) {
+                    Toast.makeText(MainActivity.this, "Please connect to a muse first!", Toast.LENGTH_SHORT)
+                            .show();
+                }
+                else {
+                    handler.removeCallbacks(tickUi);
+                    setMainFragment(fragmentId);
+                }
+            }
+        });
 
 //        FragmentManager fragmentManager = getFragmentManager();
 //
@@ -313,21 +352,47 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
     }
 
     private void setMainFragment(int fragmentId) {
-        fgMain.removeAllViews();
+        //fgMain.removeAllViews();
 
         FragmentManager fragmentManager = getFragmentManager();
 
 
         fragmentManager
                 .beginTransaction()
+                .addToBackStack("must_connect")
                 .replace(fragmentId, new HomeFragment())
                 .commit();
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
+    public void onTestAction(int action) {
+        if (alphaRecord == null) {
+            alphaRecord = new ArrayList<>();
+        }
+        if (action == START_RECORDING) {
+            handler.post(recordAlphaData);
+            Log.d(TAG, "Alphawave Average Recording Started");
+            }
+            else if (action == STOP_RECORDING){
+            handler.removeCallbacks(recordAlphaData);
+            Log.d(TAG, "Alphawave Average Recording Stopped");
+            Log.d(TAG, alphaRecord.get(0).toString());
+        }
     }
+
+
+
+    private final Runnable recordAlphaData = new Runnable() {
+        @Override
+        public void run() {
+            //average alpha power value
+            alphaRecord.add(new WavePowerRecord(
+                    (alphaBuffer[0] + alphaBuffer[1] + alphaBuffer[2] + alphaBuffer[3]) / 4,
+                    System.currentTimeMillis())
+            );
+            handler.postDelayed(tickUi, 1000 / 60);
+        }
+    };
 
 
 

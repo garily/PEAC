@@ -1,14 +1,18 @@
 package ca.sfu.iat.peac;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 /**
@@ -30,6 +34,7 @@ public class TestFragment extends Fragment {
     private static final String TEST_TYPE = "test_type";
     private static final String TEST_TIME = "test_time";
 
+    private Thread timerThread;
 
     public int getTestType() {
         return testType;
@@ -89,6 +94,7 @@ public class TestFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_test, container, false);
     }
@@ -108,15 +114,17 @@ public class TestFragment extends Fragment {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void triggerTestAction(int action) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onTestAction(action);
         }
     }
 
+    @TargetApi(26)
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        //Toast.makeText(getActivity(), context.toString(), Toast.LENGTH_SHORT).show();
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -124,10 +132,24 @@ public class TestFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        //Toast.makeText(getActivity(), activity.toString(), Toast.LENGTH_SHORT).show();
+        if (activity instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) activity;
+        } else {
+            throw new RuntimeException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        if (timerThread != null) {
+            timerThread.interrupt();
+            mListener.onTestAction(MainActivity.STOP_RECORDING);
+        }
         mListener = null;
     }
 
@@ -135,24 +157,39 @@ public class TestFragment extends Fragment {
         final TextView tvTimer = getActivity().findViewById(R.id.tvTimer);
         final long startTime = System.currentTimeMillis();
 
-        final Thread t = new Thread() {
+        final Button btnQuitTest = getActivity().findViewById(R.id.btnQuitTest);
+        btnQuitTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getFragmentManager().popBackStack();
+            }
+        });
+
+
+
+        timerThread = new Thread() {
             @Override
             public void run() {
                 try {
+                    mListener.onTestAction(MainActivity.START_RECORDING);
+                    Thread.sleep((long) (Math.random() * 3));
                     while (!isInterrupted()) {
                         Thread.sleep(50);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                tvTimer.setText(String.format("%.3f" ,(System.currentTimeMillis() - startTime)/1000f));
                                 // update TextView here!
+                                tvTimer.setText(String.format("%.3f" ,(System.currentTimeMillis() - startTime)/1000f));
                             }
                         });
                         getActivity().findViewById(R.id.fgMain).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 interrupt();
+                                mListener.onTestAction(MainActivity.STOP_RECORDING);
+                                btnQuitTest.setVisibility(View.VISIBLE);
                             }
+
                         });
                     }
                 } catch (InterruptedException e) {
@@ -160,8 +197,11 @@ public class TestFragment extends Fragment {
             }
         };
 
-        t.start();
+        timerThread.start();
     }
+
+
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -175,6 +215,6 @@ public class TestFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onTestAction(int action);
     }
 }
