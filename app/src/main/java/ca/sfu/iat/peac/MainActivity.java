@@ -267,40 +267,12 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
     private void showDislcaimer() {
         fgMain.setGravity(Gravity.CENTER);
 
-        LinearLayoutCompat ll = new LinearLayoutCompat(this);
 
-        TextView tvDisclaimer = new TextView(this);
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        tvDisclaimer.setLayoutParams(lp);
-        tvDisclaimer.setMaxWidth(1100);
-        tvDisclaimer.setMaxHeight(1100);
-        tvDisclaimer.setTextColor(Color.rgb(0, 0, 0));
-        tvDisclaimer.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-        tvDisclaimer.setGravity(Gravity.TOP);
-        tvDisclaimer.setText(R.string.strDisclaimer);
+        LayoutInflater inflater = getLayoutInflater();
+        inflater.inflate(R.layout.disclaimer, fgMain);
 
-        Button btnDisagree = new Button(this);
-        Button btnAgree = new Button(this);
-
-        btnAgree.setText(R.string.strAgree);
-        btnDisagree.setText(R.string.strDisagree);
-
-        btnAgree.setLayoutParams(lp);
-        btnDisagree.setLayoutParams(lp);
-
-
-        ll.setOrientation(LinearLayoutCompat.VERTICAL);
-        ll.setGravity(Gravity.CENTER_HORIZONTAL);
-        ll.addView(tvDisclaimer);
-        ll.addView(btnAgree);
-        ll.addView(btnDisagree);
-
-        fgMain.addView(ll);
-
-        fgMain.setOnClickListener(null);
+        Button btnDisagree = (Button) findViewById(R.id.btnAgree);
+        Button btnAgree = (Button) findViewById(R.id.btnDisagree);
 
         btnAgree.setOnClickListener(new View.OnClickListener() {
             @Override
