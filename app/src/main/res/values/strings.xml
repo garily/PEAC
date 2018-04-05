@@ -1,0 +1,7 @@
+<resources>
+	<string name="app_name">PEAC</string>
+	<string name="strWelcome">Welcome to PEAC</string>
+	<string name="strDisclaimer">In order to minimize harms this application recommends that the federal government:\n\n1.Set a national minimum age of purchase of 18, acknowledging the right of provinces and territories to harmonize it with their minimum age of purchase of alcohol\n\n2.Impose strict sanctions on false or misleading promotion as well as promotion that encourages excessive consumption,where promotion is allowed</string>
+	<string name="strDisagree">Disagree</string>
+	<string name="strAgree">Agree</string>
+</resources>
