@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
+import org.w3c.dom.Text;
 
 import java.util.Date;
 
@@ -42,6 +44,8 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        final TextView tvCredits = getActivity().findViewById(R.id.tvCredits);
+
         ImageButton imgBtnBaselineDone1 = getActivity().findViewById(R.id.imgBtnBaselineDone1);
 
         if (MainActivity.ifBaseline1 = true) {
@@ -69,6 +73,19 @@ public class HomeFragment extends Fragment {
                         .addToBackStack("home")
                         .replace(R.id.fgMain, new TestFragment())
                         .commit();
+            }
+        });
+
+        ImageButton imgBtnInfo = getActivity().findViewById(R.id.imgBtnInfo);
+        imgBtnInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (tvCredits.getVisibility() == View.VISIBLE) {
+                    tvCredits.setVisibility(View.GONE);
+                    }
+                    else {
+                    tvCredits.setVisibility(View.VISIBLE);
+                }
             }
         });
     }

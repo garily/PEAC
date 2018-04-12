@@ -46,4 +46,14 @@
 			android:visibility="gone"
 			android:id="@+id/imgBtnBaselineDone1"
 			/>
+
+	<TextView
+			android:text="@string/strCredits"
+			android:visibility="gone"
+			android:textAlignment="center"
+			android:layout_width="match_parent"
+			android:layout_height="60dp"
+			android:id="@+id/tvCredits"
+			android:layout_alignParentBottom="true"
+			/>
 </RelativeLayout>

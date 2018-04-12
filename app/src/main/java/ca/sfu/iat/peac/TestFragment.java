@@ -38,6 +38,7 @@ public class TestFragment extends Fragment {
 
     private int cycleCount;
     private TextView tvTimer;
+    private boolean ifFgmainClickable;
 
     public int getTestType() {
         return testType;
@@ -181,17 +182,20 @@ public class TestFragment extends Fragment {
         getActivity().findViewById(R.id.fgMain).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                timerThread.interrupt();
-                cycleCount--;
-                tvTimer.setText("");
-                if (cycleCount == 0) {
-                    mListener.onTestAction(MainActivity.STOP_RECORDING);
-                    btnQuitTest.setVisibility(View.VISIBLE);
-                    view.setOnClickListener(null);
-                }
-                else {
-                    timerThread = newTimerThread();
-                    timerThread.start();
+                if (ifFgmainClickable) {
+                    ifFgmainClickable = false;
+                    cycleCount--;
+                    timerThread.interrupt();
+                    tvTimer.setText("");
+                    if (cycleCount == 0) {
+                        mListener.onTestAction(MainActivity.STOP_RECORDING);
+                        btnQuitTest.setVisibility(View.VISIBLE);
+                        view.setOnClickListener(null);
+                    }
+                    else {
+                        timerThread = newTimerThread();
+                        timerThread.start();
+                    }
                 }
             }
 
@@ -207,6 +211,7 @@ public class TestFragment extends Fragment {
                         Thread.sleep(1000);
                     }
                     Thread.sleep((long) (Math.random() * 5000));
+                    ifFgmainClickable = true;
                     final long startTime = System.currentTimeMillis();
                     while (!isInterrupted()) {
                         Thread.sleep(50);
