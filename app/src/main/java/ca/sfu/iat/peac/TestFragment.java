@@ -155,7 +155,9 @@ public class TestFragment extends Fragment {
             timerThread.interrupt();
             mListener.onTestAction(MainActivity.STOP_RECORDING);
         }
+        mListener.onTestAction(MainActivity.STOP_RECORDING);
         mListener = null;
+        getActivity().findViewById(R.id.fgMain).setOnClickListener(null);
     }
 
     private void startTest() {
@@ -201,11 +203,14 @@ public class TestFragment extends Fragment {
             @Override
             public void run() {
                 try {
+                    if (cycleCount != 10) {
+                        Thread.sleep(1000);
+                    }
                     Thread.sleep((long) (Math.random() * 5000));
                     final long startTime = System.currentTimeMillis();
                     while (!isInterrupted()) {
                         Thread.sleep(50);
-                        getActivity().runOnUiThread(new Runnable() {
+                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 // update TextView here!
