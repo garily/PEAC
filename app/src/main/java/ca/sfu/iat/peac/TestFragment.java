@@ -36,6 +36,9 @@ public class TestFragment extends Fragment {
 
     private Thread timerThread;
 
+    private int cycleCount;
+    private TextView tvTimer;
+
     public int getTestType() {
         return testType;
     }
@@ -103,6 +106,8 @@ public class TestFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        cycleCount = 10;
+        tvTimer = getActivity().findViewById(R.id.tvTimer);
         Button btnStartTest = getActivity().findViewById(R.id.btnStartTest);
         btnStartTest.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,8 +159,6 @@ public class TestFragment extends Fragment {
     }
 
     private void startTest() {
-        final TextView tvTimer = getActivity().findViewById(R.id.tvTimer);
-        final long testStartTime = System.currentTimeMillis();
 
         final Button btnQuitTest = getActivity().findViewById(R.id.btnQuitTest);
         btnQuitTest.setOnClickListener(new View.OnClickListener() {
@@ -168,12 +171,36 @@ public class TestFragment extends Fragment {
         });
 
 
+        mListener.onTestAction(MainActivity.START_RECORDING);
 
-        timerThread = new Thread() {
+        timerThread = newTimerThread();
+        timerThread.start();
+
+        getActivity().findViewById(R.id.fgMain).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                timerThread.interrupt();
+                cycleCount--;
+                tvTimer.setText("");
+                if (cycleCount == 0) {
+                    mListener.onTestAction(MainActivity.STOP_RECORDING);
+                    btnQuitTest.setVisibility(View.VISIBLE);
+                    view.setOnClickListener(null);
+                }
+                else {
+                    timerThread = newTimerThread();
+                    timerThread.start();
+                }
+            }
+
+        });
+    }
+
+    private Thread newTimerThread() {
+        return new Thread() {
             @Override
             public void run() {
                 try {
-                    mListener.onTestAction(MainActivity.START_RECORDING);
                     Thread.sleep((long) (Math.random() * 5000));
                     final long startTime = System.currentTimeMillis();
                     while (!isInterrupted()) {
@@ -190,21 +217,7 @@ public class TestFragment extends Fragment {
                 }
             }
         };
-
-        timerThread.start();
-        getActivity().findViewById(R.id.fgMain).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                timerThread.interrupt();
-                mListener.onTestAction(MainActivity.STOP_RECORDING);
-                btnQuitTest.setVisibility(View.VISIBLE);
-                view.setOnClickListener(null);
-            }
-
-        });
     }
-
-
 
 
     /**
