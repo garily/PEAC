@@ -31,12 +31,15 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MainActivity extends AppCompatActivity implements TestFragment.OnFragmentInteractionListener, View.OnClickListener{
 
     public static final int START_RECORDING = 0;
     public static final int STOP_RECORDING = 1;
+    public static final int START_TIMER = 2;
+    public static final int STOP_TIMER = 3;
 
 
     public static boolean ifBaseline1;
@@ -46,20 +49,15 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
     private RelativeLayout fgMain;
     private boolean ifConnected;
 
-    private class WavePowerRecord {
-        public double record;
-        public long timeStamp;
-        public WavePowerRecord(double record, long timeStamp) {
-            this.record = record;
-            this.timeStamp = timeStamp;
-        }
-        @Override
-        public String toString () {
-            return "alphaValue = " + record + ", timeStamp = " + timeStamp;
-        }
+    private ArrayList<WavePowerRecord> alphaRecord;
+    private ArrayList<Long> timerRecordStart;
+    private ArrayList<Long> timerRecordStop;
+
+    public TestRecord getBaseTest1() {
+        return baseTest1;
     }
 
-    private ArrayList<WavePowerRecord> alphaRecord;
+    private TestRecord baseTest1;
 
     /**
      * Tag used for logging purposes.
@@ -373,17 +371,30 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
 
     @Override
     public void onTestAction(int action) {
-        if (alphaRecord == null) {
-            alphaRecord = new ArrayList<>();
-        }
-        if (action == START_RECORDING) {
-            handler.post(recordAlphaData);
-            Log.d(TAG, "Alphawave Average Recording Started");
-            }
-            else if (action == STOP_RECORDING){
-            handler.removeCallbacks(recordAlphaData);
-            Log.d(TAG, "Alphawave Average Recording Stopped");
-            Log.d(TAG, alphaRecord.get(0).toString());
+
+        switch (action) {
+            case START_RECORDING:
+                alphaRecord = new ArrayList<>();
+                timerRecordStart = new ArrayList<>();
+                timerRecordStop = new ArrayList<>();
+                handler.post(recordAlphaData);
+                Log.d(TAG, "Alphawave Average Recording Started");
+
+                break;
+            case STOP_RECORDING:
+                handler.removeCallbacks(recordAlphaData);
+                baseTest1 = new TestRecord(alphaRecord, timerRecordStart, timerRecordStop);
+                Log.d(TAG, "Alphawave Average Recording Stopped");
+                Log.d(TAG, alphaRecord.get(0).toString());
+                break;
+            case START_TIMER:
+                timerRecordStart.add(System.currentTimeMillis());
+                break;
+            case STOP_TIMER:
+                timerRecordStop.add(System.currentTimeMillis());
+                break;
+            default:
+                break;
         }
     }
 
