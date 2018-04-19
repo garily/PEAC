@@ -167,7 +167,6 @@ public class TestFragment extends Fragment {
         btnQuitTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.ifBaseline1 = true;
                 getFragmentManager().popBackStack();
                 view.setOnClickListener(null);
             }

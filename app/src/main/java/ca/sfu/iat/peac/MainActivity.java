@@ -41,23 +41,12 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
     public static final int START_TIMER = 2;
     public static final int STOP_TIMER = 3;
 
-
-    public static boolean ifBaseline1;
-
     private SharedPreferences prefs;
     private boolean ifDisclaimerAgreed;
     private RelativeLayout fgMain;
     private boolean ifConnected;
 
-    private ArrayList<WavePowerRecord> alphaRecord;
-    private ArrayList<Long> timerRecordStart;
-    private ArrayList<Long> timerRecordStop;
-
-    public TestRecord getBaseTest1() {
-        return baseTest1;
-    }
-
-    private TestRecord baseTest1;
+    protected static DataDelegate dataDelegate;
 
     /**
      * Tag used for logging purposes.
@@ -155,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dataDelegate = new DataDelegate();
 
 
         // We need to set the context on MuseManagerAndroid before we can do anything.
@@ -374,24 +365,26 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
 
         switch (action) {
             case START_RECORDING:
-                alphaRecord = new ArrayList<>();
-                timerRecordStart = new ArrayList<>();
-                timerRecordStop = new ArrayList<>();
+                dataDelegate.alphaRecord = new ArrayList<>();
+                dataDelegate.timerRecordStart = new ArrayList<>();
+                dataDelegate.timerRecordStop = new ArrayList<>();
                 handler.post(recordAlphaData);
                 Log.d(TAG, "Alphawave Average Recording Started");
 
                 break;
             case STOP_RECORDING:
                 handler.removeCallbacks(recordAlphaData);
-                baseTest1 = new TestRecord(alphaRecord, timerRecordStart, timerRecordStop);
+                dataDelegate.saveBaseTest1();
                 Log.d(TAG, "Alphawave Average Recording Stopped");
-                Log.d(TAG, alphaRecord.get(0).toString());
+                Log.d(TAG, dataDelegate.alphaRecord.get(0).toString());
                 break;
             case START_TIMER:
-                timerRecordStart.add(System.currentTimeMillis());
+                dataDelegate.timerRecordStart.add(System.currentTimeMillis());
+                Log.d(TAG, "Timer started");
                 break;
             case STOP_TIMER:
-                timerRecordStop.add(System.currentTimeMillis());
+                dataDelegate.timerRecordStop.add(System.currentTimeMillis());
+                Log.d(TAG, "Timer stopped");
                 break;
             default:
                 break;
@@ -410,7 +403,7 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
                 }
             }
             //average alpha power value
-            alphaRecord.add(new WavePowerRecord(
+            dataDelegate.alphaRecord.add(new WavePowerRecord(
                     avgDoubleArray(alphaBuffer),
                     System.currentTimeMillis())
             );
