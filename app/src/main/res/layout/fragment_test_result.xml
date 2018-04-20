@@ -1,15 +1,37 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
+                android:background="#c6ccc8"
              tools:context="ca.sfu.iat.peac.TestResultFragment"
 		>
-
-	<!-- TODO: Update blank fragment layout -->
-	<TextView
+	<com.jjoe64.graphview.GraphView
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:text="@string/hello_blank_fragment"
+			android:layout_height="200dp"
+			android:id="@+id/gvResultGraph1" />
+
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/gvResultGraph1"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"
+			android:textAlignment="center"
+			android:id="@+id/tvAvgResponseTimeLabel"
+			android:layout_marginLeft="30dp"
+			android:layout_marginStart="30dp"
+			android:text="@string/strAvgResponseTime"
 			/>
 
-</FrameLayout>
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/gvResultGraph1"
+			android:layout_toRightOf="@+id/tvAvgResponseTimeLabel"
+			android:layout_toEndOf="@+id/tvAvgResponseTimeLabel"
+			android:layout_marginLeft="10dp"
+			android:layout_marginStart="10dp"
+			android:id="@+id/tvAvgResponseTime"
+			/>
+
+</RelativeLayout>

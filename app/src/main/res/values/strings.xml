@@ -5,6 +5,7 @@
 	<string name="strDisagree">Disagree</string>
 	<string name="strAgree">Agree</string>
 	<string name="strLaunchHome">Go to Test</string>
+	<string name="strAvgResponseTime">Average response time (second):</string>
 
 
 	<string name="hello_world">Hello world!</string>

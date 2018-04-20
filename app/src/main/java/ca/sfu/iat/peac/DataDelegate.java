@@ -7,8 +7,9 @@ public class DataDelegate {
     protected ArrayList<Long> timerRecordStart;
     protected ArrayList<Long> timerRecordStop;
     protected TestRecord baseTest1;
+    protected ArrayList<Double> responseTimeRecord;
 
-    protected void  saveBaseTest1() {
+    protected void saveBaseTest1() {
         baseTest1 = new TestRecord(alphaRecord, timerRecordStart, timerRecordStop);
     }
 }

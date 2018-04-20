@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +29,8 @@ public class TestFragment extends Fragment {
     public static final int BASELINE = 0;
     public static final int AFTERDOSE = 1;
 
+    private static final int MAX_CYCLE = 5;
+
 
     private boolean ifStop = false;
     // TODO: Rename parameter arguments, choose names that match
@@ -39,6 +43,7 @@ public class TestFragment extends Fragment {
     private int cycleCount;
     private TextView tvTimer;
     private boolean ifFgmainClickable;
+    private double responseTime;
 
     public int getTestType() {
         return testType;
@@ -92,6 +97,9 @@ public class TestFragment extends Fragment {
             testType = getArguments().getInt(TEST_TYPE);
             testTime = getArguments().getInt(TEST_TIME);
         }
+        if (MainActivity.dataDelegate.responseTimeRecord == null) {
+            MainActivity.dataDelegate.responseTimeRecord = new ArrayList<>();
+        }
 
     }
 
@@ -107,7 +115,7 @@ public class TestFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        cycleCount = 10;
+        cycleCount = MAX_CYCLE;
         tvTimer = getActivity().findViewById(R.id.tvTimer);
         Button btnStartTest = getActivity().findViewById(R.id.btnStartTest);
         btnStartTest.setOnClickListener(new View.OnClickListener() {
@@ -185,7 +193,8 @@ public class TestFragment extends Fragment {
                     ifFgmainClickable = false;
                     cycleCount--;
                     timerThread.interrupt();
-                    tvTimer.setText("");
+                    MainActivity.dataDelegate.responseTimeRecord.add(responseTime);
+                    mListener.onTestAction(MainActivity.STOP_TIMER);
                     if (cycleCount == 0) {
                         mListener.onTestAction(MainActivity.STOP_RECORDING);
                         btnQuitTest.setVisibility(View.VISIBLE);
@@ -193,6 +202,7 @@ public class TestFragment extends Fragment {
                     }
                     else {
                         timerThread = newTimerThread();
+                        tvTimer.setText("");
                         timerThread.start();
                     }
                 }
@@ -206,21 +216,23 @@ public class TestFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    if (cycleCount != 10) {
+                    if (cycleCount != MAX_CYCLE) {
                         Thread.sleep(1000);
                     }
                     Thread.sleep((long) (Math.random() * 5000));
                     ifFgmainClickable = true;
                     final long startTime = System.currentTimeMillis();
+                    mListener.onTestAction(MainActivity.START_TIMER);
                     while (!isInterrupted()) {
-                        Thread.sleep(50);
                          getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 // update TextView here!
-                                tvTimer.setText(String.format("%.3f" ,(System.currentTimeMillis() - startTime)/1000f));
+                                responseTime = (System.currentTimeMillis() - startTime) / 1000.0;
+                                tvTimer.setText(String.format("%.3f" ,responseTime));
                             }
                         });
+                        Thread.sleep(50);
                     }
                 } catch (InterruptedException e) {
                 }

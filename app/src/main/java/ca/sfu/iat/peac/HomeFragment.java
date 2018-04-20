@@ -26,39 +26,11 @@ public class HomeFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        ImageButton imgBtnBaselineDone1 = getActivity().findViewById(R.id.imgBtnBaselineDone1);
-
-        if (MainActivity.dataDelegate.baseTest1 != null) {
-            imgBtnBaselineDone1.setVisibility(View.VISIBLE);
-            imgBtnBaselineDone1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    getFragmentManager().beginTransaction()
-                            .addToBackStack("home")
-                            .replace(R.id.fgMain, new TestResultFragment())
-                            .commit();
-                }
-            });
-        }
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ImageButton imgBtnBaselineDone1 = getActivity().findViewById(R.id.imgBtnBaselineDone1);
-
-        if (MainActivity.dataDelegate.baseTest1 != null) {
-            imgBtnBaselineDone1.setVisibility(View.VISIBLE);
-            imgBtnBaselineDone1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    getFragmentManager().beginTransaction()
-                            .addToBackStack("home")
-                            .replace(R.id.fgMain, new TestResultFragment())
-                            .commit();
-                }
-            });
-        }
     }
 
     @Override
@@ -71,6 +43,20 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         final TextView tvCredits = getActivity().findViewById(R.id.tvCredits);
+        ImageButton imgBtnBaselineDone1 = getActivity().findViewById(R.id.imgBtnBaselineDone1);
+
+        if (MainActivity.dataDelegate.baseTest1 != null) {
+            imgBtnBaselineDone1.setVisibility(View.VISIBLE);
+            imgBtnBaselineDone1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getFragmentManager().beginTransaction()
+                            .addToBackStack("home")
+                            .replace(R.id.fgMain, new TestResultFragment())
+                            .commit();
+                }
+            });
+        }
 
         ImageButton btnStartTest = getActivity().findViewById(R.id.imgBtnStartSession);
         btnStartTest.setOnClickListener(new View.OnClickListener() {

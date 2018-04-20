@@ -355,7 +355,7 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
 
         fragmentManager
                 .beginTransaction()
-                .addToBackStack("must_connect")
+                .addToBackStack("muse_connect")
                 .replace(fragmentId, new HomeFragment())
                 .commit();
     }
@@ -403,11 +403,12 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
                 }
             }
             //average alpha power value
-            dataDelegate.alphaRecord.add(new WavePowerRecord(
-                    avgDoubleArray(alphaBuffer),
-                    System.currentTimeMillis())
+            dataDelegate.alphaRecord.add(
+                    new WavePowerRecord(
+                        avgDoubleArray(alphaBuffer),
+                        System.currentTimeMillis())
             );
-            handler.postDelayed(tickUi, 1000 / 60);
+            handler.postDelayed(recordAlphaData, 1000 / 60);
         }
     };
 
@@ -415,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
         double sum = 0.0;
         int count = 0;
         for (double i: doubles) {
-            if (i > 0.0) {
+            if (!Double.isNaN(i)) {
                 sum += i;
                 count ++;
             }
